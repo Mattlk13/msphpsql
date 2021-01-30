@@ -3,7 +3,7 @@
 //
 // Contents: Contains portable classes for localization
 //
-// Microsoft Drivers 5.7 for PHP for SQL Server
+// Microsoft Drivers 5.9 for PHP for SQL Server
 // Copyright(c) Microsoft Corporation
 // All rights reserved.
 // MIT License
@@ -40,6 +40,9 @@
 #define CP_ISO8859_15 28605
 #define CP_UTF16 1200
 #define CP_ACP  0           // default to ANSI code page
+
+bool _setLocale(const char * localeName, std::locale ** pLocale);
+void setDefaultLocale(const char ** localeName, std::locale ** pLocale);
 
 // This class provides allocation policies for the SystemLocale and AutoArray classes.
 // This is primarily needed for the self-allocating ToUtf16/FromUtf16 methods.
@@ -244,6 +247,7 @@ inline UINT SystemLocale::MaxCharCchSize( UINT codepage )
     switch ( codepage )
     {
     case CP_UTF8:
+    case 54936:
         return 4;
     case 932:
     case 936:

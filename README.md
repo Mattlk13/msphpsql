@@ -2,9 +2,9 @@
 
 **Welcome to the Microsoft Drivers for PHP for Microsoft SQL Server**
 
-The Microsoft Drivers for PHP for Microsoft SQL Server are PHP extensions that allow for the reading and writing of SQL Server data from within PHP scripts. The SQLSRV extension provides a procedural interface while the PDO_SQLSRV extension implements PHP Data Objects (PDO) for accessing data in all editions of SQL Server 2008 R2 and later (including Azure SQL DB). These drivers rely on the [Microsoft ODBC Driver for SQL Server][odbcdoc] to handle the low-level communication with SQL Server.
+The Microsoft Drivers for PHP for Microsoft SQL Server are PHP extensions that allow for the reading and writing of SQL Server data from within PHP scripts. The SQLSRV extension provides a procedural interface while the PDO_SQLSRV extension implements PHP Data Objects (PDO) for accessing data in all editions of SQL Server 2012 and later (including Azure SQL DB). These drivers rely on the [Microsoft ODBC Driver for SQL Server][odbcdoc] to handle the low-level communication with SQL Server.
 
-This release contains the SQLSRV and PDO_SQLSRV drivers for PHP 7.1+ with improvements on both drivers and some limitations. Upcoming [releases][releases] will contain additional functionalities, bug fixes, and more.
+This release contains the SQLSRV and PDO_SQLSRV drivers for PHP 7.3+ with improvements on both drivers and some limitations. Upcoming [releases][releases] will contain additional functionalities, bug fixes, and more.
 
 ## Take our survey
 
@@ -25,7 +25,7 @@ Azure Pipelines       | AppVeyor (Windows)       | Travis CI (Linux)        | Co
 [az-image]: https://dev.azure.com/sqlclientdrivers-ci/msphpsql/_apis/build/status/Microsoft.msphpsql?branchName=dev
 [Coverage Coveralls]: https://coveralls.io/repos/github/microsoft/msphpsql/badge.svg?branch=dev
 [coveralls-site]: https://coveralls.io/github/microsoft/msphpsql?branch=dev
-[Coverage Codecov]: https://codecov.io/gh/microsoft/msphpsql/branch/master/graph/badge.svg
+[Coverage Codecov]: https://codecov.io/gh/microsoft/msphpsql/branch/dev/graph/badge.svg
 [codecov-site]: https://codecov.io/gh/microsoft/msphpsql
 
 ## Get Started
@@ -35,8 +35,6 @@ Azure Pipelines       | AppVeyor (Windows)       | Travis CI (Linux)        | Co
 * [**RedHat + SQL Server + PHP 7**](https://www.microsoft.com/sql-server/developer-get-started/php/rhel)
 * [**SUSE + SQL Server + PHP 7**](https://www.microsoft.com/sql-server/developer-get-started/php/sles)
 * [**macOS + SQL Server + PHP 7**](https://www.microsoft.com/sql-server/developer-get-started/php/mac/)
-* [**Docker**](https://hub.docker.com/r/lbosqmsft/mssql-php-msphpsql/)
-
 
 ## Announcements
 
@@ -47,11 +45,11 @@ Azure Pipelines       | AppVeyor (Windows)       | Travis CI (Linux)        | Co
 For full details on the system requirements for the drivers, see the [system requirements](https://docs.microsoft.com/sql/connect/php/system-requirements-for-the-php-sql-driver) on Microsoft Docs.
 
 On the client machine:
-- PHP 7.2.x (7.2.0 and up on Unix, 7.2.1 and up on Windows), 7.3.x, or 7.4.x
+- 7.3.x, 7.4.x, 8.0.x
 - [Microsoft ODBC Driver 17, Microsoft ODBC Driver 13, or Microsoft ODBC Driver 11][odbcdoc]
 - If using a Web server such as Internet Information Services (IIS) or Apache, it must be configured to run PHP
 
-On the server side, Microsoft SQL Server 2008 R2 and above on Windows are supported, as are Microsoft SQL Server 2016 and above on Linux.
+On the server side, Microsoft SQL Server 2012 and above on Windows are supported, as are Microsoft SQL Server 2016 and above on Linux.
 
 ## Building and Installing the Drivers on Windows
 
@@ -84,8 +82,8 @@ Given a version number MAJOR.MINOR.PATCH,
  
 The version number may have trailing pre-release version identifiers to indicate the stability and/or build metadata.
 
-- Pre-release version is denoted by a hyphen followed by `preview` or `RC` and may be followed by a series of dot separated identifiers. Production quality releases do not contain the pre-release version. `preview` has lower precedence than `RC`. Example of precedence: *preview < preview.1 < RC < RC.1*. Note that the PECL package version numbers do not have the hyphen before the pre-release version, owing to restrictions in PECL. Example of a PECL package version number: 1.2.3preview
-- Build metadata may be denoted by a plus sign followed by 4 or 5 digits, such as  `1.2.3-preview+5678` or `1.2.3+5678`. Build metadata does not figure into the precedence order.
+- Pre-release version is denoted by a hyphen followed by `beta` or `RC` followed by a number. Production quality releases do not contain the pre-release version. `beta` has lower precedence than `RC`. Note that the PECL package version numbers do not have the hyphen before the pre-release version, owing to restrictions in PECL. An example of a PECL package version is `5.9.0beta2`.
+- Build metadata may be denoted by a plus sign followed by a number of digits, such as `5.9.0-beta2+13930`. Build metadata does not affect the precedence order.
 
 ## Future Plans
 - Expand SQL Server feature support (example: Azure Active Directory, Always Encrypted, etc.)

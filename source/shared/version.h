@@ -4,7 +4,7 @@
 // File: version.h
 // Contents: Version number constants
 //
-// Microsoft Drivers 5.7 for PHP for SQL Server
+// Microsoft Drivers 5.9 for PHP for SQL Server
 // Copyright(c) Microsoft Corporation
 // All rights reserved.
 // MIT License
@@ -26,12 +26,12 @@
 // Increase Minor with backward compatible new functionalities and API changes.
 // Increase Patch for backward compatible fixes.
 #define SQLVERSION_MAJOR 5
-#define SQLVERSION_MINOR 7
-#define SQLVERSION_PATCH 1
+#define SQLVERSION_MINOR 9
+#define SQLVERSION_PATCH 0
 #define SQLVERSION_BUILD 0
 
-// For previews, set this constant to 1. Otherwise, set it to 0
-#define PREVIEW 1
+// For previews, set this constant to 1, 2 and so on. Otherwise, set it to 0
+#define PREVIEW 0
 #define SEMVER_PRERELEASE
 
 // Semantic versioning build metadata, build meta data is not counted in precedence order.
@@ -47,12 +47,10 @@
 
 // Semantic versioning: 
 // For stable releases leave SEMVER_PRERELEASE empty
-// Otherwise, for pre-releases, add '-' and change it to:
-// "RC" for release candidates
-// "preview" for ETP 
+// Otherwise, for pre-releases, add '-' and change it to "beta" with a preview number
 #if PREVIEW > 0
 #undef SEMVER_PRERELEASE
-#define SEMVER_PRERELEASE "preview"
+#define SEMVER_PRERELEASE "beta" STRINGIFY(PREVIEW)
 #define VER_FILEVERSION_STR     VER_APIVERSION_STR "-" SEMVER_PRERELEASE SEMVER_BUILDMETA
 #else
 #define VER_FILEVERSION_STR     VER_APIVERSION_STR SEMVER_PRERELEASE SEMVER_BUILDMETA
@@ -60,8 +58,8 @@
 
 #define _FILEVERSION            SQLVERSION_MAJOR,SQLVERSION_MINOR,SQLVERSION_PATCH,SQLVERSION_BUILD
 
-// PECL package version macros ('-' or '+' is not allowed)
-#define PHP_SQLSRV_VERSION      VER_APIVERSION_STR SEMVER_PRERELEASE
-#define PHP_PDO_SQLSRV_VERSION  PHP_SQLSRV_VERSION
+// PECL package version ('-' or '+' is not allowed) - to support Pickle do not use macros below
+#define PHP_SQLSRV_VERSION      "5.9.0"
+#define PHP_PDO_SQLSRV_VERSION  "5.9.0"
 
 #endif // VERSION_H

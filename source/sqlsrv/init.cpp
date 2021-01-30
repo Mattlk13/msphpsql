@@ -2,7 +2,7 @@
 // File: init.cpp
 // Contents: initialization routines for the extension
 //
-// Microsoft Drivers 5.7 for PHP for SQL Server
+// Microsoft Drivers 5.9 for PHP for SQL Server
 // Copyright(c) Microsoft Corporation
 // All rights reserved.
 // MIT License
@@ -98,6 +98,8 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX( sqlsrv_fetch_arginfo, 0, 0, 1 )
     ZEND_ARG_INFO( 0, stmt )
+    ZEND_ARG_INFO( 0, row )
+    ZEND_ARG_INFO( 0, offset )
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX( sqlsrv_fetch_array_arginfo, 0, 0, 1 )
@@ -269,10 +271,10 @@ zend_module_entry g_sqlsrv_module_entry =
 
 PHP_MINIT_FUNCTION(sqlsrv)
 {
-    SQLSRV_UNUSED( type );
+    // SQLSRV_UNUSED( type );
 
-    core_sqlsrv_register_logger( ss_sqlsrv_log );
-	
+    core_sqlsrv_register_severity_checker(ss_severity_check);
+
     // our global variables are initialized in the RINIT function
 #if defined(ZTS) 
     if( ts_allocate_id( &sqlsrv_globals_id,
@@ -551,14 +553,14 @@ PHP_MINIT_FUNCTION(sqlsrv)
         }
     }
 
-    if( php_register_url_stream_wrapper( SQLSRV_STREAM_WRAPPER, &g_sqlsrv_stream_wrapper TSRMLS_CC ) == FAILURE ) {
+    if( php_register_url_stream_wrapper( SQLSRV_STREAM_WRAPPER, &g_sqlsrv_stream_wrapper ) == FAILURE ) {
         LOG( SEV_ERROR, "%1!s!: stream registration failed", _FN_ );
         return FAILURE;
     }
 
     try {
         // retrieve the handles for the environments
-        core_sqlsrv_minit( &g_ss_henv_cp, &g_ss_henv_ncp, ss_error_handler, "PHP_MINIT_FUNCTION for sqlsrv" TSRMLS_CC );
+        core_sqlsrv_minit( &g_ss_henv_cp, &g_ss_henv_ncp, ss_error_handler, "PHP_MINIT_FUNCTION for sqlsrv" );
     }
 
     catch( core::CoreException& ) {
@@ -594,7 +596,7 @@ void sqlsrv_encoding_dtor( _Inout_ zval* elem ) {
 
 PHP_MSHUTDOWN_FUNCTION(sqlsrv)
 {
-    SQLSRV_UNUSED( type );
+    // SQLSRV_UNUSED( type );
 	
     UNREGISTER_INI_ENTRIES();
 
@@ -610,7 +612,7 @@ PHP_MSHUTDOWN_FUNCTION(sqlsrv)
 
     core_sqlsrv_mshutdown( *g_ss_henv_cp, *g_ss_henv_ncp );
 
-    if( php_unregister_url_stream_wrapper( SQLSRV_STREAM_WRAPPER TSRMLS_CC ) == FAILURE ) {
+    if( php_unregister_url_stream_wrapper( SQLSRV_STREAM_WRAPPER ) == FAILURE ) {
         return FAILURE;
     }
 
@@ -628,8 +630,8 @@ PHP_MSHUTDOWN_FUNCTION(sqlsrv)
 
 PHP_RINIT_FUNCTION(sqlsrv)
 {
-    SQLSRV_UNUSED( module_number );
-    SQLSRV_UNUSED( type );
+    // SQLSRV_UNUSED( module_number );
+    // SQLSRV_UNUSED( type );
 
 #if defined(ZTS) 
     ZEND_TSRMLS_CACHE_UPDATE();
@@ -654,6 +656,25 @@ PHP_RINIT_FUNCTION(sqlsrv)
     SQLSRV_G( log_subsystems ) = INI_INT( subsystems );
     SQLSRV_G( buffered_query_limit ) = INI_INT( buffered_limit );
 
+#ifndef _WIN32
+    char set_locale_info[] = INI_PREFIX INI_SET_LOCALE_INFO;
+    SQLSRV_G(set_locale_info) = INI_INT(set_locale_info);
+
+    // if necessary, set locale from the environment for ODBC, which MUST be done before any connection
+    int set_locale = SQLSRV_G(set_locale_info);
+    if (set_locale == 2) {
+        setlocale(LC_ALL, "");
+    }
+    else if (set_locale == 1) {
+        setlocale(LC_CTYPE, "");
+    }
+    else {
+        // Do nothing
+    }
+
+    LOG(SEV_NOTICE, INI_PREFIX INI_SET_LOCALE_INFO " = %1!d!", set_locale);
+#endif
+
     LOG( SEV_NOTICE, INI_PREFIX INI_WARNINGS_RETURN_AS_ERRORS " = %1!s!", SQLSRV_G( warnings_return_as_errors ) ? "On" : "Off");
     LOG( SEV_NOTICE, INI_PREFIX INI_LOG_SEVERITY " = %1!d!", SQLSRV_G( log_severity ));
     LOG( SEV_NOTICE, INI_PREFIX INI_LOG_SUBSYSTEMS " = %1!d!", SQLSRV_G( log_subsystems ));
@@ -669,13 +690,13 @@ PHP_RINIT_FUNCTION(sqlsrv)
 
 PHP_RSHUTDOWN_FUNCTION(sqlsrv)
 {
-    SQLSRV_UNUSED( module_number );
-    SQLSRV_UNUSED( type );
+    // SQLSRV_UNUSED( module_number );
+    // SQLSRV_UNUSED( type );
 
     LOG_FUNCTION( "PHP_RSHUTDOWN for php_sqlsrv" );
-    reset_errors( TSRMLS_C );
+    reset_errors();
 
-	// TODO - destruction
+	// destruction
     zval_ptr_dtor( &SQLSRV_G( errors ));
     zval_ptr_dtor( &SQLSRV_G( warnings ));
 

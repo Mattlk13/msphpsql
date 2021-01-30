@@ -25,11 +25,14 @@ $daasMode = false;
 $marsMode = true;
 
 $traceEnabled = false; 
+$localeDisabled = false;
 
 $adServer = 'TARGET_AD_SERVER';
 $adDatabase = 'TARGET_AD_DATABASE';
 $adUser = 'TARGET_AD_USERNAME';
 $adPassword = 'TARGET_AD_PASSWORD';
+$adSPClientId = 'TARGET_ADSP_CLIENT_ID';
+$adSPClientSecret = 'TARGET_ADSP_CLIENT_SECRET';
 
 if (isset($_ENV['MSSQL_SERVER']) || isset($_ENV['MSSQL_USER']) || isset($_ENV['MSSQL_PASSWORD'])) {
     $server = $_ENV['MSSQL_SERVER'];

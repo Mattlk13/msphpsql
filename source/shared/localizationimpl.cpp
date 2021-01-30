@@ -5,7 +5,7 @@
 //           Must be included in one c/cpp file per binary
 //           A build error will occur if this inclusion policy is not followed
 //
-// Microsoft Drivers 5.7 for PHP for SQL Server
+// Microsoft Drivers 5.9 for PHP for SQL Server
 // Copyright(c) Microsoft Corporation
 // All rights reserved.
 // MIT License
@@ -50,38 +50,45 @@ struct cp_iconv
 // CodePage 2 corresponds to binary. If the attribute PDO::SQLSRV_ENCODING_BINARY
 // is set, GetIndex() above hits the assert(false) directive unless we include
 // CodePage 2 below and assign an empty string to it.
+#ifdef __MUSL__
+#define TRANSLIT ""
+#else
+#define TRANSLIT "//TRANSLIT"
+#endif
+
 const cp_iconv cp_iconv::g_cp_iconv[] = {
     { 65001, "UTF-8" },
     {  1200, "UTF-16LE" },
     {     3, "UTF-8" },
     {     2, "" },
-    {  1252, "CP1252//TRANSLIT" },
-    {   850, "CP850//TRANSLIT" },
-    {   437, "CP437//TRANSLIT" },
-    {   874, "CP874//TRANSLIT" },
-    {   932, "CP932//TRANSLIT" },
-    {   936, "CP936//TRANSLIT" },
-    {   949, "CP949//TRANSLIT" },
-    {   950, "CP950//TRANSLIT" },
-    {  1250, "CP1250//TRANSLIT" },
-    {  1251, "CP1251//TRANSLIT" },
-    {  1253, "CP1253//TRANSLIT" },
-    {  1254, "CP1254//TRANSLIT" },
-    {  1255, "CP1255//TRANSLIT" },
-    {  1256, "CP1256//TRANSLIT" },
-    {  1257, "CP1257//TRANSLIT" },
-    {  1258, "CP1258//TRANSLIT" },
-    { CP_ISO8859_1, "ISO8859-1//TRANSLIT" },
-    { CP_ISO8859_2, "ISO8859-2//TRANSLIT" },
-    { CP_ISO8859_3, "ISO8859-3//TRANSLIT" },
-    { CP_ISO8859_4, "ISO8859-4//TRANSLIT" },
-    { CP_ISO8859_5, "ISO8859-5//TRANSLIT" },
-    { CP_ISO8859_6, "ISO8859-6//TRANSLIT" },
-    { CP_ISO8859_7, "ISO8859-7//TRANSLIT" },
-    { CP_ISO8859_8, "ISO8859-8//TRANSLIT" },
-    { CP_ISO8859_9, "ISO8859-9//TRANSLIT" },
-    { CP_ISO8859_13, "ISO8859-13//TRANSLIT" },
-    { CP_ISO8859_15, "ISO8859-15//TRANSLIT" },
+    {  1252, "CP1252" TRANSLIT },
+    {   850, "CP850" TRANSLIT },
+    {   437, "CP437" TRANSLIT },
+    {   874, "CP874" TRANSLIT },
+    {   932, "CP932" TRANSLIT },
+    {   936, "CP936" TRANSLIT },
+    {   949, "CP949" TRANSLIT },
+    {   950, "CP950" TRANSLIT },
+    {  1250, "CP1250" TRANSLIT },
+    {  1251, "CP1251" TRANSLIT },
+    {  1253, "CP1253" TRANSLIT },
+    {  1254, "CP1254" TRANSLIT },
+    {  1255, "CP1255" TRANSLIT },
+    {  1256, "CP1256" TRANSLIT },
+    {  1257, "CP1257" TRANSLIT },
+    {  1258, "CP1258" TRANSLIT },
+    { 54936, "GB18030" TRANSLIT},
+    { CP_ISO8859_1, "ISO8859-1" TRANSLIT },
+    { CP_ISO8859_2, "ISO8859-2" TRANSLIT },
+    { CP_ISO8859_3, "ISO8859-3" TRANSLIT },
+    { CP_ISO8859_4, "ISO8859-4" TRANSLIT },
+    { CP_ISO8859_5, "ISO8859-5" TRANSLIT },
+    { CP_ISO8859_6, "ISO8859-6" TRANSLIT },
+    { CP_ISO8859_7, "ISO8859-7" TRANSLIT },
+    { CP_ISO8859_8, "ISO8859-8" TRANSLIT },
+    { CP_ISO8859_9, "ISO8859-9" TRANSLIT },
+    { CP_ISO8859_13, "ISO8859-13" TRANSLIT },
+    { CP_ISO8859_15, "ISO8859-15" TRANSLIT },
     { 12000, "UTF-32LE" }
 };
 const size_t cp_iconv::g_cp_iconv_count = ARRAYSIZE(cp_iconv::g_cp_iconv);
@@ -279,22 +286,46 @@ bool EncodingConverter::Initialize()
 
 using namespace std;
 
+#ifndef _countof
+  #define _countof(obj)     (sizeof(obj)/sizeof(obj[0]))
+#endif
+
+const char* DEFAULT_LOCALES[] = {"en_US.UTF-8", "C"};
+
+bool _setLocale(const char * localeName, std::locale ** pLocale)
+{
+    try
+    {
+        *pLocale = new std::locale(localeName);
+    }
+    catch(const std::exception& e)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void setDefaultLocale(const char ** localeName, std::locale ** pLocale)
+{
+    if(!localeName || !_setLocale(*localeName, pLocale))
+    {
+        int count = 0;
+        while(!_setLocale(DEFAULT_LOCALES[count], pLocale) && count < _countof(DEFAULT_LOCALES))
+        {
+            count++;
+        }
+        
+        if(localeName)
+            *localeName = count < _countof(DEFAULT_LOCALES)?DEFAULT_LOCALES[count]:NULL;
+    }
+}
+
 SystemLocale::SystemLocale( const char * localeName )
     : m_uAnsiCP(CP_UTF8)
     , m_pLocale(NULL)
 {
-    const char* DEFAULT_LOCALE = "en_US.UTF-8";
-
-    try {
-        m_pLocale = new std::locale(localeName);
-    }
-    catch(const std::exception& e) {
-        localeName = DEFAULT_LOCALE;
-    }
-    
-    if(!m_pLocale) {
-        m_pLocale = new std::locale(localeName);
-    }
+    setDefaultLocale(&localeName, &m_pLocale);
 
     // Mapping from locale charset to codepage
     struct LocaleCP
@@ -312,6 +343,11 @@ SystemLocale::SystemLocale( const char * localeName )
     const LocaleCP lcpTable[] = {
         { "utf8", CP_UTF8 },
         { "UTF-8", CP_UTF8 },
+        { "BIG5", 950 },
+        { "BIG5-HKSCS", 950 },
+        { "gb18030", 54936 },
+        { "gb2312", 936 },
+        { "gbk", 936 },
         CPxxx(1252), CPxxx(850), CPxxx(437), CPxxx(874), CPxxx(932), CPxxx(936), CPxxx(949), CPxxx(950),
         CPxxx(1250), CPxxx(1251), CPxxx(1253), CPxxx(1254), CPxxx(1255), CPxxx(1256), CPxxx(1257), CPxxx(1258),
         ISO8859(1), ISO8859(2), ISO8859(3), ISO8859(4), ISO8859(5), ISO8859(6),
@@ -433,7 +469,7 @@ size_t SystemLocale::Utf8To16( const char *src, SSIZE_T cchSrc, WCHAR *dest, siz
             }
             usrc++;
             ucode = (ucode&15)<<12 | (c1&0x3F)<<6 | (c2&0x3F);
-            if (ucode < 0x800 || ucode >= 0xD800 && ucode <= 0xDFFF)
+            if (ucode < 0x800 || (ucode >= 0xD800 && ucode <= 0xDFFF))
             {
                 goto Invalid;
             }
@@ -475,7 +511,7 @@ size_t SystemLocale::Utf8To16( const char *src, SSIZE_T cchSrc, WCHAR *dest, siz
 
             if (ucode < 0x10000   // overlong encoding
              || ucode > 0x10FFFF  // exceeds Unicode range
-             || ucode >= 0xD800 && ucode <= 0xDFFF) // surrogate pairs
+             || (ucode >= 0xD800 && ucode <= 0xDFFF)) // surrogate pairs
             {
                 goto Invalid;
             }
@@ -558,7 +594,7 @@ size_t SystemLocale::Utf8To16Strict( const char *src, SSIZE_T cchSrc, WCHAR *des
             }
             usrc++;
             ucode = (ucode&15)<<12 | (c1&0x3F)<<6 | (c2&0x3F);
-            if (ucode < 0x800 || ucode >= 0xD800 && ucode <= 0xDFFF)
+            if (ucode < 0x800 || (ucode >= 0xD800 && ucode <= 0xDFFF))
             {
                 goto Invalid;
             }
@@ -600,7 +636,7 @@ size_t SystemLocale::Utf8To16Strict( const char *src, SSIZE_T cchSrc, WCHAR *des
 
             if (ucode < 0x10000   // overlong encoding
              || ucode > 0x10FFFF  // exceeds Unicode range
-             || ucode >= 0xD800 && ucode <= 0xDFFF) // surrogate pairs
+             || (ucode >= 0xD800 && ucode <= 0xDFFF)) // surrogate pairs
             {
                 goto Invalid;
             }
@@ -631,16 +667,22 @@ size_t SystemLocale::Utf8To16Strict( const char *src, SSIZE_T cchSrc, WCHAR *des
 
 size_t SystemLocale::ToUtf16( UINT srcCodePage, const char * src, SSIZE_T cchSrc, WCHAR * dest, size_t cchDest, DWORD * pErrorCode )
 {
+    if (cchSrc < 0) {
+        if (NULL != pErrorCode)
+            *pErrorCode = ERROR_INVALID_PARAMETER;
+        return 0;
+    }
+
     srcCodePage = ExpandSpecialCP( srcCodePage );
     if ( dest )
     {
         if ( srcCodePage == CP_UTF8 )
         {
-            return SystemLocale::Utf8To16( src, cchSrc < 0 ? (1+strlen(src)) : cchSrc, dest, cchDest, pErrorCode );
+            return SystemLocale::Utf8To16( src, cchSrc, dest, cchDest, pErrorCode );
         }
         else if ( srcCodePage == 1252 )
         {
-            return SystemLocale::CP1252ToUtf16( src, cchSrc < 0 ? (1+strlen(src)) : cchSrc, dest, cchDest, pErrorCode );
+            return SystemLocale::CP1252ToUtf16( src, cchSrc, dest, cchDest, pErrorCode );
         }
     }
     EncodingConverter cvt( CP_UTF16, srcCodePage );
@@ -657,16 +699,21 @@ size_t SystemLocale::ToUtf16( UINT srcCodePage, const char * src, SSIZE_T cchSrc
 
 size_t SystemLocale::ToUtf16Strict( UINT srcCodePage, const char * src, SSIZE_T cchSrc, WCHAR * dest, size_t cchDest, DWORD * pErrorCode )
 {
+    if (cchSrc < 0) {
+        if (NULL != pErrorCode)
+            *pErrorCode = ERROR_INVALID_PARAMETER;
+        return 0;
+    }
     srcCodePage = ExpandSpecialCP( srcCodePage );
     if ( dest )
     {
         if ( srcCodePage == CP_UTF8 )
         {
-            return SystemLocale::Utf8To16Strict( src, cchSrc < 0 ? (1+strlen(src)) : cchSrc, dest, cchDest, pErrorCode );
+            return SystemLocale::Utf8To16Strict( src, cchSrc, dest, cchDest, pErrorCode );
         }
         else if ( srcCodePage == 1252 )
         {
-            return SystemLocale::CP1252ToUtf16( src, cchSrc < 0 ? (1+strlen(src)) : cchSrc, dest, cchDest, pErrorCode );
+            return SystemLocale::CP1252ToUtf16( src, cchSrc, dest, cchDest, pErrorCode );
         }
     }
     EncodingConverter cvt( CP_UTF16, srcCodePage );
@@ -758,7 +805,7 @@ size_t SystemLocale::Utf8From16( const WCHAR *src, SSIZE_T cchSrc, char *dest, s
                 return 0;
             }
             *dest++ = 0xE0 | (wch >> 12);
-            *dest++ = 0x80 | (wch >> 6)&0x3F;
+            *dest++ = 0x80 | ((wch >> 6)&0x3F);
             *dest++ = 0x80 | (wch &0x3F);
         }
         else if (wch < 0xDC00) // 65536 to end of Unicode: 4 bytes
@@ -796,9 +843,9 @@ size_t SystemLocale::Utf8From16( const WCHAR *src, SSIZE_T cchSrc, char *dest, s
                 return 0;
             }
             *dest++ = 0xF0 | (wch >> 18);
-            *dest++ = 0x80 | (wch >>12)&0x3F;
-            *dest++ = 0x80 | (wch >> 6)&0x3F;
-            *dest++ = 0x80 | wch&0x3F;
+            *dest++ = 0x80 | ((wch >>12)&0x3F);
+            *dest++ = 0x80 | ((wch >> 6)&0x3F);
+            *dest++ = 0x80 | (wch&0x3F);
         }
         else // unexpected trail surrogate
         {
@@ -897,7 +944,7 @@ size_t SystemLocale::Utf8From16Strict( const WCHAR *src, SSIZE_T cchSrc, char *d
                 return 0;
             }
             *dest++ = 0xE0 | (wch >> 12);
-            *dest++ = 0x80 | (wch >> 6)&0x3F;
+            *dest++ = 0x80 | ((wch >> 6)&0x3F);
             *dest++ = 0x80 | (wch &0x3F);
         }
         else if (wch < 0xDC00) // 65536 to end of Unicode: 4 bytes
@@ -928,9 +975,9 @@ size_t SystemLocale::Utf8From16Strict( const WCHAR *src, SSIZE_T cchSrc, char *d
                 return 0;
             }
             *dest++ = 0xF0 | (wch >> 18);
-            *dest++ = 0x80 | (wch >>12)&0x3F;
-            *dest++ = 0x80 | (wch >> 6)&0x3F;
-            *dest++ = 0x80 | wch&0x3F;
+            *dest++ = 0x80 | ((wch >>12)&0x3F);
+            *dest++ = 0x80 | ((wch >> 6)&0x3F);
+            *dest++ = 0x80 | (wch&0x3F);
         }
         else // unexpected trail surrogate
         {
