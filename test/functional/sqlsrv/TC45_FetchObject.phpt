@@ -6,15 +6,13 @@ Verifies data retrieval via "sqlsrv_fetch_object".
 PHPT_EXEC=true
 --SKIPIF--
 <?php 
-require_once('MsCommon.inc');
-// locale must be set before 1st connection
-setUSAnsiLocale();
 require('skipif_versions_old.inc');
 ?>
 --FILE--
 <?php
 require_once('MsCommon.inc');
 
+#[AllowDynamicProperties]
 class TestClass
 {
     public function __construct($a1, $a2, $a3)

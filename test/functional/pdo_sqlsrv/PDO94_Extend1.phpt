@@ -5,7 +5,14 @@ Verification of capabilities for extending PDO.
 --ENV--
 PHPT_EXEC=true
 --SKIPIF--
-<?php require('skipif.inc'); ?>
+<?php
+if (!extension_loaded("pdo_sqlsrv")) {
+    die("skip Extension not loaded");
+}
+if (PHP_VERSION_ID < 80000) {
+    die("skip Test designed for PHP 8.*");
+}
+?>
 --FILE--
 <?php
 include 'MsCommon.inc';
@@ -41,6 +48,7 @@ function Extend()
     EndTest($testName);
 }
 
+#[AllowDynamicProperties]
 class ExPDO extends PDO
 {
     public $test1 = 1;
@@ -48,7 +56,7 @@ class ExPDO extends PDO
     function __destruct()
     {
         echo __METHOD__ . "()\n";
-        }
+    }
 
     function test()
     {
@@ -56,9 +64,9 @@ class ExPDO extends PDO
         var_dump($this->test1);
         var_dump($this->test2);
         $this->test2 = 22;
-        }
+    }
     
-    function query($sql)
+    function query(string $sql, ?int $fetchMode = null, mixed ...$fetchModeArgs): PDOStatement|false
     {
         echo __METHOD__ . "()\n";
         $stmt = parent::prepare($sql, array(PDO::ATTR_STATEMENT_CLASS=>array('ExPDOStatement')));
@@ -67,6 +75,7 @@ class ExPDO extends PDO
     }
 }
 
+#[AllowDynamicProperties]
 class ExPDOStatement extends PDOStatement
 {
     protected function __construct()

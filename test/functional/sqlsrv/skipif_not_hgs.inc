@@ -9,11 +9,15 @@ if (!extension_loaded("sqlsrv")) {
 
 require_once("MsSetup.inc");
 
-$connectionInfo = array("UID"=>$userName, "PWD"=>$userPassword, "Driver" => $driver);
+if ($attestation == 'TARGET_ATTESTATION') {
+    die("skip Not set up for testing with secure enclave.");
+}
 
-$conn = sqlsrv_connect( $server, $connectionInfo );
+$connectionInfo = array("UID"=>$userName, "PWD"=>$userPassword);
+
+$conn = sqlsrv_connect($server, $connectionInfo);
 if ($conn === false) {
-    die( "skip Could not connect during SKIPIF." );
+    die("skip Could not connect during SKIPIF.");
 }
 
 $msodbcsql_ver = sqlsrv_client_info($conn)["DriverVer"];
@@ -30,7 +34,7 @@ if ($msodbcsql_min < 4 and $msodbcsql_maj == 17) {
 
 // Get SQL Server
 $server_info = sqlsrv_server_info($conn);
-if (strpos($server_info['SQLServerName'], 'PHPHGS') === false) {
+if (strpos($server_info['SQLServerName'], 'HGS') === false) {
     die("skip Server is not HGS enabled");
 }
 ?>

@@ -1,7 +1,7 @@
 --TEST--
 retrieves UTF-8 encoded data by specifying the UTF-8 character set when making the connection
 --SKIPIF--
-
+<?php require('skipif.inc'); ?>
 --FILE--
 <?php
 require('connect.inc');
@@ -25,7 +25,7 @@ $tsql1 = "UPDATE Production.ProductReview
 // 
 $reviewID = 3;
 
-$comments = utf8_encode("testing 1, 2, 3, 4.  Testing.");
+$comments = mb_convert_encoding("testing 1, 2, 3, 4.  Testing.", 'ISO-8859-1', 'UTF-8');
 $params1 = array(
                   array( $comments, null ),
                   array( $reviewID, null )

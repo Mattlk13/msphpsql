@@ -5,6 +5,7 @@ Test for fetch_object with Unicode column name
 --FILE--
 <?php
 
+#[AllowDynamicProperties]
 class foo
 {
     public $stuff = "stuff";
@@ -25,6 +26,7 @@ class foo
     }
 }
 
+#[AllowDynamicProperties]
 class foo_noargs
 {
     public $stuff = "stuff";
@@ -220,11 +222,11 @@ if (is_null($obj)) {
 echo "Past the end of the result set (7)\n";
 $obj = sqlsrv_fetch_object($stmt, "foo");
 if ($obj === false) {
-    die(print_r(sqlsrv_errors(), true));
+    print_r( sqlsrv_errors());
 }
 if (is_null($obj)) {
     echo "Done fetching objects.\n";
-} else {
+} elseif ($obj) {
     $obj->do_foo();
     print_r($obj);
 }

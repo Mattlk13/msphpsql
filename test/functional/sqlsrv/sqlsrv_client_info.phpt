@@ -15,11 +15,11 @@ var_dump( $client_info );
 --EXPECTREGEX--
 array\(4\) {
   \[\"(DriverDllName|DriverName)\"\]=>
-  (string\([0-9]+\) \"msodbcsql1[1-9].dll\"|string\([0-9]+\) \"(libmsodbcsql-[0-9]{2}\.[0-9]\.so\.[0-9]\.[0-9]|libmsodbcsql.[0-9]{2}.dylib)\")
+  (string\([0-9]+\) \"msodbcsql1[1-9].dll\"|string\([0-9]+\) \"(libmsodbcsql-[0-9]{2}\.[0-9]{1,2}\.so\.[0-9]\.[0-9]|libmsodbcsql.[0-9]{2}.dylib)\")
   \[\"DriverODBCVer\"\]=>
   string\(5\) \"[0-9]{1,2}\.[0-9]{1,2}\"
   \[\"DriverVer\"\]=>
   string\(10\) \"[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}\"
   \[\"ExtensionVer\"\]=>
-  string\([0-9]+\) \"[0-9].[0-9]\.[0-9](-(RC[0-9]?|preview))?(\.[0-9]+)?(\+[0-9]+)?\"
+  string\([0-9]+\) \"[0-9]\.[0-9]+\.[0-9](-(RC[1-9]?|beta[1-9]))?(\.[0-9]+)?(\+[0-9]+)?\"
 }

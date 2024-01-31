@@ -31,7 +31,7 @@ function compareDate($dtout, $dtin, $dataType) {
 }
 
 $dataTypes = array("datetime2", "datetimeoffset", "time");
-$precisions = array(/*0,*/ 1, 2, 4, 7);
+$precisions = array(0, 1, 2, 4, 7);
 $inputValuesInit = array("datetime2" => array("0001-01-01 00:00:00", "9999-12-31 23:59:59"),
                      "datetimeoffset" => array("0001-01-01 00:00:00 -14:00", "9999-12-31 23:59:59 +14:00"),
                      "time" => array("00:00:00", "23:59:59"));
@@ -83,6 +83,11 @@ try {
                 // check the case when fetching as PDO::PARAM_STR or PDO::PARAM_LOB
                 // with or without AE: should work
                 } else {
+                    if (PHP_VERSION_ID >= 80100 && $pdoParamType == "PDO::PARAM_LOB") {
+                        // Starting with PHP 8.1 fetching as PDO::PARAM_LOB will return a resource obj
+                        $det = fread($det, 8192);
+                        $rand = fread($rand, 8192);
+                    }
                     if (compareDate($det, $inputValues[0], $dataType) && compareDate($rand, $inputValues[1], $dataType)) {
                         echo "****Retrieving $typeFull as $pdoParamType is supported****\n";
                     } else {
@@ -101,6 +106,10 @@ try {
 }
 ?>
 --EXPECT--
+Testing datetime2(0):
+****Retrieving datetime2(0) as PDO::PARAM_STR is supported****
+****Retrieving datetime2(0) as PDO::PARAM_LOB is supported****
+
 Testing datetime2(1):
 ****Retrieving datetime2(1) as PDO::PARAM_STR is supported****
 ****Retrieving datetime2(1) as PDO::PARAM_LOB is supported****
@@ -117,6 +126,10 @@ Testing datetime2(7):
 ****Retrieving datetime2(7) as PDO::PARAM_STR is supported****
 ****Retrieving datetime2(7) as PDO::PARAM_LOB is supported****
 
+Testing datetimeoffset(0):
+****Retrieving datetimeoffset(0) as PDO::PARAM_STR is supported****
+****Retrieving datetimeoffset(0) as PDO::PARAM_LOB is supported****
+
 Testing datetimeoffset(1):
 ****Retrieving datetimeoffset(1) as PDO::PARAM_STR is supported****
 ****Retrieving datetimeoffset(1) as PDO::PARAM_LOB is supported****
@@ -132,6 +145,10 @@ Testing datetimeoffset(4):
 Testing datetimeoffset(7):
 ****Retrieving datetimeoffset(7) as PDO::PARAM_STR is supported****
 ****Retrieving datetimeoffset(7) as PDO::PARAM_LOB is supported****
+
+Testing time(0):
+****Retrieving time(0) as PDO::PARAM_STR is supported****
+****Retrieving time(0) as PDO::PARAM_LOB is supported****
 
 Testing time(1):
 ****Retrieving time(1) as PDO::PARAM_STR is supported****

@@ -18,15 +18,6 @@ try {
     createTable($conn1, $tableName, array(new ColumnMeta("int", "ID", "NOT NULL PRIMARY KEY"), "Policy" => "varchar(2)", "Label" => "varchar(10)", "Budget" => "money"));
 
     try {
-        $res = $conn1->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-        if ($res) {
-            echo "setAttribute should have failed.\n\n";
-        }
-    } catch (Exception $e) {
-        echo $e->getMessage() . "\n";
-    }
-
-    try {
         $query = "SELECT * FROM [$tableName]";
         $stmt = $conn1->query($query);
         $stmt->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
@@ -185,8 +176,7 @@ try {
 }
 
 ?>
---EXPECT--
-SQLSTATE[IMSSP]: The given attribute is only supported on the PDOStatement object.
+--EXPECTF--
 SQLSTATE[IMSSP]: An invalid attribute was designated on the PDOStatement object.
 Start inserting data...
 ....Done....
@@ -271,7 +261,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(6) "Budget"
   ["len"]=>

@@ -3,12 +3,7 @@ Fetch Field Data Test verifies the data retrieved via sqlsrv_get_field
 --ENV--
 PHPT_EXEC=true
 --SKIPIF--
-<?
-require_once('MsCommon.inc');
-// locale must be set before 1st connection
-setUSAnsiLocale();
-require('skipif_versions_old.inc');
-?>
+<?php require('skipif_versions_old.inc'); ?>
 --FILE--
 <?php
 
@@ -54,8 +49,11 @@ function fetchFields()
             if (isUpdatable($col)) {
                 // should check data even if $fld is null
                 $data = AE\getInsertData($startRow + $i, $col);
-                if (!checkData($col, $fld, $data)) {
-                    echo("\nData error\nExpected:\n$data\nActual:\n$fld\n");
+                if (!checkData($col, $fld, $data, isBinary($col))) {
+                    echo("\nData error\nExpected:\n");
+                    var_dump($data);
+                    echo("\nActual:\n");
+                    var_dump($fld);
 
                     setUTF8Data(false);
                     die("Data corruption on row ".($startRow + $i)." column $col");
@@ -71,10 +69,23 @@ function fetchFields()
     sqlsrv_close($conn1);
 }
 
-function checkData($col, $actual, $expected)
+function checkData($col, $actual, $expected, $isBinary)
 {
     $success = true;
-
+    
+    // First check for nulls
+    if (is_null($expected)) {
+        $success = is_null($actual);
+        if (!$success) {
+            trace("\nData error\nExpected null but Actual:\n$actual\n");
+        }
+        return $success;
+    } elseif (is_null($actual)) {
+        trace("\nData error\nExpected:\n$expected\nbut Actual is null\n");
+        return false;
+    }
+    
+    // Neither is null, so keep checking
     if (isNumeric($col)) {
         if (floatval($actual) != floatval($expected)) {
             $success = false;

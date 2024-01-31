@@ -3,6 +3,509 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## 5.12.0 - 2024-01-31
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.3
+- Support for Alpine 3.19
+
+### Removed
+- Support for PHP 8.0
+- Support for Ubuntu 18.04
+- Support for Alpine 3.15
+
+### Fixed
+- Update connection string keywords set function (#1484)
+- Fix error throw for multiple result sets (#1485)
+- Fix invalid precision error (#1497)
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.12.0-beta1 - 2023-12-08
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.3
+
+### Removed
+- Support for PHP 8.0
+- Support for Ubuntu 18.04
+
+### Fixed
+- Update connection string keywords set function (#1484)
+- Fix error throw for multiple result sets (#1485)
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.11.1 - 2023-08-31
+Updated PECL release packages. Here is the list of updates:
+
+### Fixed
+- Reset type after bind param (#1452)
+- Fixed error when using PDO::ATTR_STRINGIFY_FETCHES (#1468) by SakiTakamachi
+- Change connection options to case insensitive (#1460)
+- Bugfix for 1465 Adding a NULL check (#1471)
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.11.0 - 2023-02-28
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.2
+
+### Removed
+- Support for PHP 7.4
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.11.0-beta1 - 2023-01-25
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.2
+
+### Fixed
+- Pull request [#1408](https://github.com/microsoft/msphpsql/pull/1408) - Fixed right truncation issue, unit test added by talkinnl
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.10.1 - 2022-05-12
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Pull request [#1382](https://github.com/microsoft/msphpsql/pull/1382) - Support for ActiveDirectoryIntegrated authentication
+
+### Fixed
+- Pull request [#1374](https://github.com/microsoft/msphpsql/pull/1374) - Fixed ActiveDirectoryMsi Authentication behavior when specified UID by laclefyoshi
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.10.0 - 2022-01-31
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.1
+- Support for macOS Monterey, Debian 11, Ubuntu 21.04 and 21.10, Alpine 3.13, 3.14 and 3.15
+- Support for Apple M1 ARM64 hardware -- requires [MS ODBC Driver 17.8+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos?view=sql-server-ver15)
+- Adjusted connection keyword and value validation for more flexibility
+- Feature Request [#795](https://github.com/microsoft/msphpsql/issues/795) - adding support for [Table-valued parameters](https://github.com/Microsoft/msphpsql/wiki/Features#tvp)
+- Feature Request [#1320](https://github.com/microsoft/msphpsql/issues/1320) - allow PDO::ATTR_EMULATE_PREPARES to be set at the connection level
+
+### Removed
+- Support for PHP 7.3
+- Support for Ubuntu 16.04, Alpine 3.11 and Alpine 3.12
+
+### Fixed
+- Issue [#1244](https://github.com/microsoft/msphpsql/issues/1244) - use lower case for object names for PDO::lastInsertId() - pull request [#1245](https://github.com/microsoft/msphpsql/pull/1245) by morozov
+- Pull request [#1251](https://github.com/microsoft/msphpsql/pull/1251) - simplified implementations of last insert id and quote
+- Issue [#1258](https://github.com/microsoft/msphpsql/issues/1258) - updated pdo_sqlsrv_get_driver_methods as per documentation - pull request [#1259](https://github.com/microsoft/msphpsql/pull/1259)
+- Pull request [#1260](https://github.com/microsoft/msphpsql/pull/1260) - cleaned up redundant code
+- Issue [#1261](https://github.com/microsoft/msphpsql/issues/1261) - simplified get_field_as_string and made it more robust - pull request [#1265](https://github.com/microsoft/msphpsql/pull/1265)
+- Pull request [#1262](https://github.com/microsoft/msphpsql/pull/1262) - simplified parse_param_array in sqlsrv
+- Pull request [#1267](https://github.com/microsoft/msphpsql/pull/1267) - replaced the obsolete MACRO ZVAL_NEW_ARR with array_init
+- Pull request [#1275](https://github.com/microsoft/msphpsql/pull/1275) - fixed warning compiling core_stmt.cpp by mlocati
+- Pull request [#1288](https://github.com/microsoft/msphpsql/pull/1288) - applied mask to pdo quote for binary inputs
+- Pull request [#1290](https://github.com/microsoft/msphpsql/pull/1290) - updated list of supported processor architecture
+- Issue [#1307](https://github.com/microsoft/msphpsql/issues/1307) - added TVP support to non-procedure statements
+- Issue [#1310](https://github.com/microsoft/msphpsql/issues/1310) - adjusted sql_data_type and column size for NULL parameters - pull request [#1311](https://github.com/microsoft/msphpsql/pull/1311) by gjcarrette
+- Pull request [#1326](https://github.com/microsoft/msphpsql/pull/1326) - php drivers simply pass Azure AD Authentication to ODBC driver, which will verify the settings
+- Issue [#1329](https://github.com/microsoft/msphpsql/issues/1329) - reset sql type and column size for input params
+- Issue [#1331](https://github.com/microsoft/msphpsql/issues/1331) - restore PDO::ATTR_ERRMODE if calling PDO::lastInsertId() call fails - pull request [#1330](https://github.com/microsoft/msphpsql/pull/1330) by mpyw and pull request [#1332](https://github.com/microsoft/msphpsql/pull/1332)
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.10.0-beta2 - 2021-12-02
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.1
+- Support for Ubuntu 21.10
+- Feature Request [#1320](https://github.com/microsoft/msphpsql/issues/1320) - allow PDO::ATTR_EMULATE_PREPARES to be set at the connection level
+
+### Fixed
+- Issue [#1307](https://github.com/microsoft/msphpsql/issues/1307) - added TVP support to non-procedure statements
+- Issue [#1310](https://github.com/microsoft/msphpsql/issues/1310) - adjusted sql_data_type and column size for NULL parameters - pull request [#1311](https://github.com/microsoft/msphpsql/pull/1311) by gjcarrette
+- Pull request [#1326](https://github.com/microsoft/msphpsql/pull/1326) - php drivers simply pass Azure AD Authentication to ODBC driver, which will verify the settings
+- Issue [#1329](https://github.com/microsoft/msphpsql/issues/1329) - reset sql type and column size for input params
+- Issue [#1331](https://github.com/microsoft/msphpsql/issues/1331) - restore PDO::ATTR_ERRMODE if calling PDO::lastInsertId() call fails - pull request [#1330](https://github.com/microsoft/msphpsql/pull/1330) by mpyw and pull request [#1332](https://github.com/microsoft/msphpsql/pull/1332)
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.10.0-beta1 - 2021-09-08
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.1 RC 1
+- Support for Ubuntu 21.04 and Alpine 3.13
+- Support for Apple M1 ARM64 hardware (requires [MS ODBC Driver 17.8+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/install-microsoft-odbc-driver-sql-server-macos?view=sql-server-ver15)
+- Feature Request [#795](https://github.com/microsoft/msphpsql/issues/795) - adding support for [Table-valued parameters](https://github.com/Microsoft/msphpsql/wiki/Features#tvp)
+
+### Removed
+- Support for Ubuntu 16.04
+
+### Fixed
+- Issue [#1244](https://github.com/microsoft/msphpsql/issues/1244) - use lower case for object names for PDO::lastInsertId() - pull request [#1245](https://github.com/microsoft/msphpsql/pull/1245) by morozov
+- Pull request [#1251](https://github.com/microsoft/msphpsql/pull/1251) - simplified implementations of last insert id and quote
+- Issue [#1258](https://github.com/microsoft/msphpsql/issues/1258) - updated pdo_sqlsrv_get_driver_methods as per documentation - pull request [#1259](https://github.com/microsoft/msphpsql/pull/1259)
+- Pull request [#1260](https://github.com/microsoft/msphpsql/pull/1260) - cleaned up redundant code
+- Issue [#1261](https://github.com/microsoft/msphpsql/issues/1261) - simplified get_field_as_string and made it more robust - pull request [#1265](https://github.com/microsoft/msphpsql/pull/1265)
+- Pull request [#1262](https://github.com/microsoft/msphpsql/pull/1262) - simplified parse_param_array in sqlsrv
+- Pull request [#1267](https://github.com/microsoft/msphpsql/pull/1267) - replaced the obsolete MACRO ZVAL_NEW_ARR with array_init
+- Pull request [#1275](https://github.com/microsoft/msphpsql/pull/1275) - fixed warning compiling core_stmt.cpp by mlocati
+- Pull request [#1288](https://github.com/microsoft/msphpsql/pull/1288) - applied mask to pdo quote for binary inputs
+- Pull request [#1290](https://github.com/microsoft/msphpsql/pull/1290) - updated list of supported processor architecture
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.9.0 - 2021-01-29
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.0
+- Support for macOS Big Sur, Ubuntu 20.04, Ubuntu 20.10 and Alpine 3.12
+- Support for GB18030 locale [#1115](
+https://github.com/microsoft/msphpsql/pull/1115)
+- Feature Request [#924](https://github.com/microsoft/msphpsql/issues/924) - extended PDO errorinfo to include [additional odbc messages if available](https://docs.microsoft.com/sql/connect/php/pdo-errorinfo) - pull request [#1133](
+https://github.com/microsoft/msphpsql/pull/1133)
+- [Data Classification with rank info](https://github.com/microsoft/msphpsql/wiki/Features#dataClass), which requires [MS ODBC Driver 17.4.2+](https://docs.microsoft.com/sql/connect/odbc/download-odbc-driver-for-sql-server) and [SQL Server 2019](https://www.microsoft.com/sql-server/sql-server-2019) or an Azure SQL instance that supports it
+- [Azure Active Directory Service Principal authentication support](https://docs.microsoft.com/sql/connect/php/azure-active-directory), which requires [MS ODBC Driver 17.7+](https://docs.microsoft.com/sql/connect/odbc/download-odbc-driver-for-sql-server)
+
+### Removed
+- Dropped support for PHP 7.2
+- Dropped support for macOS High Sierra, Ubuntu 19.10 and Debian 8
+
+### Fixed
+- Pull Request [#1127](https://github.com/microsoft/msphpsql/pull/1127) - removed TSRMLS macros in preparation for PHP 8 by remicollet
+- Pull Request [#1136](https://github.com/microsoft/msphpsql/pull/1136) - improved performance when handling decimal numbers as inputs or outputs and removed unncessary conversions for numeric values
+- Pull Request [#1143](https://github.com/microsoft/msphpsql/pull/1143) - if an exception occurs when executing a query, it will not change the output parameters
+- Pull Request [#1144](https://github.com/microsoft/msphpsql/pull/1144) - use the correct C types when binding output parameters with integer values
+- Pull Request [#1146](https://github.com/microsoft/msphpsql/pull/1146) - improved performance when fetching numbers using client buffers
+- Pull Request [#1165](https://github.com/microsoft/msphpsql/pull/1165) - set query timeout without using LOCK TIMEOUT, which saves an extra trip to the server
+- Issue [#1170](https://github.com/microsoft/msphpsql/issues/1170) - when fetching large data types such as ntext, check more than only the display size - pull request [#1172](https://github.com/microsoft/msphpsql/pull/1172)
+- Pull Request [#1205](https://github.com/microsoft/msphpsql/pull/1205) - minimized compilation warnings on Linux and macOS 
+- Pull Request [#1209](https://github.com/microsoft/msphpsql/pull/1209) - fixed a bug when fetching varbinary max fields as char or wide chars
+- Issue [#1210](https://github.com/microsoft/msphpsql/issues/1210) - switched from preview to beta terminology to enable Pickle support
+- Issue [#1213](https://github.com/microsoft/msphpsql/issues/1213) - the MACOSX_DEPLOYMENT_TARGET in config files caused linker errors in macOS Big Sur - Pull Request [#1215](https://github.com/microsoft/msphpsql/pull/1215)
+- Pull Request [#1226](https://github.com/microsoft/msphpsql/pull/1226) - replaced the problematic strlen function 
+- Pull Request [#1227](https://github.com/microsoft/msphpsql/pull/1227) - addressed static code analyis issues
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+
+## 5.9.0-beta2 - 2020-12-02
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.0
+
+### Removed
+- Dropped support for PHP 7.2
+
+### Fixed
+- Pull Request [#1205](https://github.com/microsoft/msphpsql/pull/1205) - minimized compilation warnings on Linux and macOS 
+- Pull Request [#1209](https://github.com/microsoft/msphpsql/pull/1209) - fixed a bug in fetching varbinary max fields as char or wide chars
+- Issue [#1210](https://github.com/microsoft/msphpsql/issues/1210) - switched from preview to beta terminology to enable Pickle support
+- Issue [#1213](https://github.com/microsoft/msphpsql/issues/1213) - the MACOSX_DEPLOYMENT_TARGET in config files caused linker errors in macOS Big Sur - Pull Request [#1215](https://github.com/microsoft/msphpsql/pull/1215)
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This preview release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+## 5.9.0-preview1 - 2020-10-02
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 8.0 RC 1
+- Support for Ubuntu 20.04 and Alpine 3.12
+- Support for GB18030 locale [#1115](
+https://github.com/microsoft/msphpsql/pull/1115)
+- Feature Request [#924](https://github.com/microsoft/msphpsql/issues/924) - extended PDO errorinfo to include [additional odbc messages if available](https://github.com/microsoft/msphpsql/wiki/Features#pdoErrorInfo) - pull request [#1133](
+https://github.com/microsoft/msphpsql/pull/1133)
+- [Data Classification with rank info](https://github.com/microsoft/msphpsql/wiki/Features#dataClass), which requires [MS ODBC Driver 17.4.2+](https://docs.microsoft.com/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15) and [SQL Server 2019](https://www.microsoft.com/sql-server/sql-server-2019) or an Azure SQL instance that supports it
+
+### Removed
+- Dropped support for Ubuntu 19.10 and Debian 8.
+
+### Fixed
+- Pull Request [#1127](https://github.com/microsoft/msphpsql/pull/1127) - removal of TSRMLS macros in preparation for PHP 8 by remicollet
+- Pull Request [#1136](https://github.com/microsoft/msphpsql/pull/1136) - improved performance when handling decimal numbers as inputs or outputs and removed unncessary conversions for numeric values
+- Pull Request [#1143](https://github.com/microsoft/msphpsql/pull/1143) - if an exception occurs when executing a query, will not change the output parameters
+- Pull Request [#1144](https://github.com/microsoft/msphpsql/pull/1144) - use the correct C types when binding output parameters with integer values
+- Pull Request [#1146](https://github.com/microsoft/msphpsql/pull/1146) - improved performance when fetching numbers using client buffers
+- Pull Request [#1165](https://github.com/microsoft/msphpsql/pull/1165) - setting query timeout without using LOCK TIMEOUT, which saves an extra trip to the server
+- Issue [#1170](https://github.com/microsoft/msphpsql/issues/1170) - when fetching large data types such as ntext will check more than only the display size - pull request [#1172](https://github.com/microsoft/msphpsql/pull/1172)
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- This preview release requires ODBC Driver 17.4.2 or above. Otherwise, a warning about failing to set an attribute may be suppressed when using an older ODBC driver.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+## 5.8.1 - 2020-04-15
+Updated PECL release packages. Here is the list of updates:
+
+### Fixed
+- Pull Request [#1094](https://github.com/microsoft/msphpsql/pull/1094) - Fixed default locale issues in Alpine Linux 
+- Pull Request [#1095](https://github.com/microsoft/msphpsql/pull/1095) - Removed unnecessary data structure to support Client-Side Cursors feature in Alpine Linux
+- Pull Request [#1107](https://github.com/microsoft/msphpsql/pull/1107) - Fixed logging issues when both drivers are enabled in Alpine Linux
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+
+### Known Issues
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
+## 5.8.0 - 2020-01-31
+Updated PECL release packages. Here is the list of updates:
+
+### Added
+- Support for PHP 7.4
+- Support for [Microsoft ODBC Driver 17.5](
+https://docs.microsoft.com/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15) on all platforms
+- Support for Debian 10 and Red Hat 8 - require MS ODBC Driver 17.4+
+- Support for macOS Catalina, Alpine Linux 3.11 (experimental), and Ubuntu 19.10 - require ODBC Driver 17.5+
+- Feature Request [#929](https://github.com/microsoft/msphpsql/issues/929) - new [Language option](https://github.com/microsoft/msphpsql/wiki/Features#language) - Pull Request [#930](https://github.com/microsoft/msphpsql/pull/930)
+- [Data Classification Sensitivity Metadata Retrieval](https://github.com/microsoft/msphpsql/wiki/Features#data-classification-sensitivity-metadata) - requires ODBC Driver 17.4.2+ and [SQL Server 2019](https://www.microsoft.com/sql-server/sql-server-2019)
+- Feature Request [#1018](https://github.com/microsoft/msphpsql/issues/1018) - support for [PHP extended string types](https://github.com/microsoft/msphpsql/wiki/Features#natlTypes) - Pull Request [#1043](https://github.com/microsoft/msphpsql/pull/1043)
+- [Always Encrypted with secure enclaves](https://github.com/microsoft/msphpsql/wiki/Features#alwaysencryptedV2) - requires ODBC Driver 17.4+ and [SQL Server 2019](https://www.microsoft.com/sql-server/sql-server-2019)
+- Feature Request [#1063](https://github.com/microsoft/msphpsql/issues/1063) - add configurable options for locale settings in Linux and macOS  - Pull Request [#1069](https://github.com/microsoft/msphpsql/pull/1069)
+
+### Removed
+- Dropped support for [PHP 7.1](https://www.php.net/supported-versions.php)
+- Dropped support for SQL Server 2008 R2, macOS Sierra, Ubuntu 18.10 and Ubuntu 19.04.
+
+### Fixed
+- Issue [#570](https://github.com/microsoft/msphpsql/issues/570) - Fixed fetching varbinary data using client buffer with sqlsrv
+- Pull Request [#972](https://github.com/microsoft/msphpsql/pull/972) - Removed redundant calls to retrieve the number of columns or rows in the current query result set
+- Pull Request [#978](https://github.com/microsoft/msphpsql/pull/978) - PDO_SQLSRV implementation of PDO::getColumnMeta now references cached metadata rather than making an ODBC call every time
+- Pull Request [#979](https://github.com/microsoft/msphpsql/pull/979) - Added support for Data Classification Sensitivity metadata retrieval
+- Pull Request [#985](https://github.com/microsoft/msphpsql/pull/985) - Fixed memory issues with Data Classification data structures
+- Issue [#432](https://github.com/microsoft/msphpsql/issues/432) - Having any invalid UTF-8 name in the connection string will no longer invoke misleading error messages
+- Issue [#909](https://github.com/microsoft/msphpsql/issues/909) - Fixed potential exception with locale issues in macOS 
+- Pull Request [#992](https://github.com/microsoft/msphpsql/pull/992) - Produced the correct error when requesting Data Classification metadata with ODBC drivers prior to 17
+- Pull Request [#1001](https://github.com/microsoft/msphpsql/pull/1001) - Fixed compilation issue with PHP 7.4 alpha
+- Pull Request [#1004](https://github.com/microsoft/msphpsql/pull/1004) - Fixed another compilation issue with PHP 7.4 alpha
+- Pull Request [#1008](https://github.com/microsoft/msphpsql/pull/1008) - Improved data caching when fetching datetime objects
+- Pull Request [#1011](https://github.com/microsoft/msphpsql/pull/1011) - Fixed a potential buffer overflow when parsing for escaped braces in the connection string
+- Pull Request [#1015](https://github.com/microsoft/msphpsql/pull/1015) - Fixed compilation issues and addressed various memory leaks detected by PHP 7.4 beta 1 
+- Issue [#1027](https://github.com/microsoft/msphpsql/issues/1027) - Fixed how drivers handle query timeout settings
+- Pull Request [#1049](https://github.com/microsoft/msphpsql/pull/1049) - Performance improvement for fetching from tables with many columns - cached the derived php types with column metadata to streamline data retrieval
+- Pull Request [#1068](https://github.com/microsoft/msphpsql/pull/1068) - Some cosmetic changes to source code as per suggestions from a static analysis tool
+- Issue [#1079](https://github.com/microsoft/msphpsql/issues/1079) - Support sql_variant types when using client buffers
+
+### Limitations
+- No support for inout / output params when using sql_variant type
+- No support for inout / output params when formatting decimal values
+- In Linux and macOS, setlocale() only takes effect if it is invoked before the first connection. Attempting to set the locale after connecting will not work
+- Always Encrypted requires [MS ODBC Driver 17+](https://docs.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server)
+  - Only Windows Certificate Store and Azure Key Vault are supported. Custom Keystores are not yet supported
+  - Issue [#716](https://github.com/Microsoft/msphpsql/issues/716) - With Always Encrypted enabled, named parameters in subqueries are not supported
+  - Issue [#1050](https://github.com/microsoft/msphpsql/issues/1050) - With Always Encrypted enabled, insertion requires the column list for any tables with identity columns
+  - [Always Encrypted limitations](https://docs.microsoft.com/sql/connect/php/using-always-encrypted-php-drivers#limitations-of-the-php-drivers-when-using-always-encrypted)
+- Alpine Linux support is currently experimental. More robust support will be added in future releases
+
+### Known Issues
+- In Alpine Linux, the Client-Side Cursors feature may cause an access violation if both sqlsrv and pdo_sqlsrv are enabled. Either enable only sqlsrv or pdo_sqlsrv, or build PHP from source by compiling the drivers statically.
+- Connection pooling on Linux or macOS is not recommended with [unixODBC](http://www.unixodbc.org/) < 2.3.7
+- When pooling is enabled in Linux or macOS
+  - unixODBC <= 2.3.4 (Linux and macOS) might not return proper diagnostic information, such as error messages, warnings and informative messages
+  - due to this unixODBC bug, fetch large data (such as xml, binary) as streams as a workaround. See the examples [here](https://github.com/Microsoft/msphpsql/wiki/Features#pooling)
+
 ## 5.7.1-preview - 2019-12-03
 Updated PECL release packages. Here is the list of updates:
 

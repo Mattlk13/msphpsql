@@ -6,12 +6,7 @@ by checking all fetch type modes.
 --ENV--
 PHPT_EXEC=true
 --SKIPIF--
-<?
-require_once('MsCommon.inc');
-// locale must be set before 1st connection
-setUSAnsiLocale();
-require('skipif_versions_old.inc');
-?>
+<?php require('skipif_versions_old.inc'); ?>
 --FILE--
 <?php
 require_once('MsCommon.inc');
@@ -131,9 +126,17 @@ function checkData($row, $stmt, $index, $mode)
         }
     } elseif (isBinary($col)) {
         $expected = sqlsrv_get_field($stmt, $index, SQLSRV_PHPTYPE_STRING(SQLSRV_ENC_CHAR));
-        $actual = bin2hex($actual);
-        if (strcasecmp($actual, $expected) != 0) {
-            $success = false;
+        if (is_null($expected)) {
+            $success = is_null($actual);
+        } else {
+            if (is_null($actual)) {
+                $success = false;
+            } else {
+                $actual = bin2hex($actual);
+                if (strcasecmp($actual, $expected) != 0) {
+                    $success = false;
+                }
+            }
         }
     } else { // if (isChar($col))
         if (useUTF8Data()) {
@@ -141,7 +144,9 @@ function checkData($row, $stmt, $index, $mode)
         } else {
             $expected = sqlsrv_get_field($stmt, $index, SQLSRV_PHPTYPE_STRING(SQLSRV_ENC_CHAR));
         }
-        if (strcmp($actual, $expected) != 0) {
+        if (is_null($expected)) {
+            $success = is_null($actual);
+        } elseif (strcmp($actual, $expected) != 0) {
             $success = false;
         }
     }

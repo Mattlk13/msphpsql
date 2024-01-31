@@ -5,7 +5,14 @@ Verification of capabilities for extending PDO.
 --ENV--
 PHPT_EXEC=true
 --SKIPIF--
-<?php require('skipif.inc'); ?>
+<?php
+if (!extension_loaded("pdo_sqlsrv")) {
+    die("skip Extension not loaded");
+}
+if (PHP_VERSION_ID < 80000) {
+    die("skip Test designed for PHP 8.*");
+}
+?>
 --FILE--
 <?php
 include 'MsCommon.inc';
@@ -20,6 +27,9 @@ function Extend()
     // simply use $databaseName from MsSetup.inc to facilitate testing in Azure,  
     // which does not support switching databases
     $conn2 = new ExPDO("sqlsrv:Server=$server;Database=$databaseName", $uid, $pwd);
+    // With PHP 8.0 the default is PDO::ERRMODE_EXCEPTION rather than PDO::ERRMODE_SILENT
+    $conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+    
     DropTable($conn2, "tmp_table");
     $conn2->exec("CREATE TABLE tmp_table (id INT)");
     $conn2->exec("INSERT INTO tmp_table (id) VALUES (1), (2)");
@@ -36,27 +46,31 @@ function Extend()
     EndTest($testName);
 }
 
+#[AllowDynamicProperties]
 class ExPDO extends PDO
 {
     public function __construct()
     {
         $this->protocol();
         $args = func_get_args();
-        return (call_user_func_array(array($this, 'parent::__construct'), $args));
+        $callable = parent::class . '::__construct';
+        return (call_user_func_array($callable, $args));
     }
 
-    public function exec($args1)
+    public function exec(string $args1) : int|false
     {
         $this->protocol();
         $args = func_get_args();
-        return (call_user_func_array(array($this, 'parent::exec'), $args));
+        $callable = parent::class . '::exec';
+        return (call_user_func_array($callable, $args));
     }
 
-    public function query()
+    function query(string $sql, ?int $fetchMode = null, mixed ...$fetchModeArgs): PDOStatement|false
     {
         $this->protocol();
         $args = func_get_args();
-        return (call_user_func_array(array($this, 'parent::query'), $args));
+        $callable = parent::class . '::query';
+        return (call_user_func_array($callable, $args));
     }
 
     public function __call($method, $args)

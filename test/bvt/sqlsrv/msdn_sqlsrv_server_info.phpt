@@ -1,7 +1,7 @@
 --TEST--
 Returns information about the server.
 --SKIPIF--
-
+<?php require('skipif.inc'); ?>
 --FILE--
 <?php
 /* Connect to the local server using Windows Authentication. */
@@ -32,4 +32,4 @@ else
 sqlsrv_close( $conn);
 ?>
 --EXPECTREGEX--
-CurrentDatabase: AdventureWorks.*<br>SQLServerVersion: 1[2-9].00.[0-9]{4}<br>SQLServerName: SQL.+<br>
+CurrentDatabase: AdventureWorks201.<br>SQLServerVersion: 1[2-9].00.[0-9]{4}<br>SQLServerName: .+<br>

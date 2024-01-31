@@ -7,6 +7,10 @@
         Common functions (shared by all tests).
 
 */
+error_reporting( ~E_DEPRECATED );
+$tvpIncPath = dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR;
+
+require_once($tvpIncPath. 'test_tvp_data.php');
 
 //
 // looks like an additional file (in addition to pdo_test_base.inc) may be needed for these PHPTs
@@ -302,7 +306,7 @@ class BindParamOp
         }
 
         if ($length >= 0 || is_null($length)) {
-            $this->length = $length;
+            $this->length = is_null($length) ? 0 : $length;
         } else {
             printf("BindParamOp construct: The length provided must be greater or equal to 0.\n");
             exit;
@@ -484,6 +488,17 @@ function getSeqPlaceholders($num)
     return $placeholderStr;
 }
 
+/**
+ * Compare two floating point numbers and return true if the difference is minimal
+ * @param  float  $expected  : expected value
+ * @param  float  $actual : actual value
+ */
+function compareFloats($expected, $actual)
+{
+    $epsilon = 0.00001;
+    $diff = abs(($actual - $expected) / $expected);
+    return ($diff < $epsilon);
+}
 
 /**
  * Fetch all rows and all columns given a table name, and print them
@@ -516,14 +531,11 @@ function fetchAll($conn, $tbname)
  * @param  string  $fetchStyle : fetch_style argument passed to PDOStatement::fetchAll
  * @return array rows in a result set
  */
-function selectAll($conn, $tbname, $fetchStyle = null)
+function selectAll($conn, $tbname, $fetchStyle = PDO::FETCH_BOTH)
 {
     try {
         $sql = "SELECT * FROM $tbname";
         $stmt = $conn->query($sql);
-        if ($fetchStyle) {
-            $fetchStyle = constant($fetchStyle);
-        }
         $data = $stmt->fetchAll($fetchStyle);
         return $data;
     } catch (PDOException $e) {
@@ -622,6 +634,25 @@ function IsDaasMode()
 {
     require  'MsSetup.inc';
     return ($daasMode ? true : false);
+}
+
+function isServerHGSEnabled()
+{
+    $enabled = false;
+    try {
+        $conn = connect();
+        $tsql = "SELECT @@SERVERNAME";
+        $stmt = $conn->query($tsql);
+        
+        $result = $stmt->fetch(PDO::FETCH_NUM);
+        $name = $result[0];
+        
+        $enabled = (strpos($result[0], 'HGS') != false);
+    } catch (Exception $e) {
+        echo $e->getMessage();
+        die("Could not fetch server property.");
+    }
+    return $enabled;
 }
 
 function isSQLAzure()
@@ -1707,19 +1738,21 @@ function CallProcEx($conn, $procName, $procPrefix, $procArgs, $procValues)
 function CreateFunc($conn, $funcName, $funcArgs, $retType, $funcCode)
 {
     DropFunc($conn, $funcName);
-    $stmt = sqlsrv_query($conn, "CREATE FUNCTION [$funcName] ($funcArgs) RETURNS $retType AS BEGIN $funcCode END");
-    if ($stmt === false) {
-        FatalError("Failed to create test function");
+    try {
+        $stmt = $conn->query("CREATE FUNCTION [$funcName] ($funcArgs) RETURNS $retType AS BEGIN $funcCode END");
+    } catch (PDOException $e) {
+        echo "Failed to create test function\n";
+        var_dump($e);
     }
-    sqlsrv_free_stmt($stmt);
+    unset($stmt);
 }
 
 function DropFunc($conn, $funcName)
 {
-    $stmt = sqlsrv_query($conn, "DROP FUNCTION [$funcName]");
-    if ($stmt === false) {
-    } else {
-        sqlsrv_free_stmt($stmt);
+    try {
+        $conn->query("DROP FUNCTION [$funcName]");
+    } catch (PDOException $e) {
+        ; // do nothing
     }
 }
 
@@ -1780,4 +1813,31 @@ function PhpVersionComponents(&$major, &$minor, &$sub)
     $major = strtok($str_version, ".");
     $minor = strtok(".");
     $sub = strtok(".");
+}
+
+function getTodayDateAsString($conn)
+{
+    $tsql = 'SELECT CONVERT (VARCHAR(20), GETDATE())';
+    $stmt = $conn->query($tsql);
+    $row = $stmt->fetch(PDO::FETCH_NUM);
+    return $row[0];
+}
+
+function compareResourceToInput($actual, $expected)
+{
+    $size = 8192;
+    $pos = 0;
+    $matched = true;
+    while (!feof($actual)) {
+        $original = fread($actual, $size);
+        $str = substr($expected, $pos, $size);
+        
+        if ($original !== $str) {
+            $matched = false;
+            break;
+        }
+        $pos += $size;
+    }
+    
+    return $matched;
 }

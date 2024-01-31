@@ -1,13 +1,10 @@
 --TEST--
 executes two queries as part of a transaction
 --SKIPIF--
-
+<?php require('skipif.inc'); ?>
 --FILE--
 <?php
 require('connect.inc');
-
-// First, reset the RevisionNumber to make sure it won't overflow
-ResetRevisionNumber( $server, $databaseName, $uid, $pwd );
 
 $connectionInfo = array( "Database"=>"$databaseName", "UID"=>$uid, "PWD"=>$pwd);
 $conn = sqlsrv_connect( $server, $connectionInfo);
@@ -16,6 +13,8 @@ if( $conn === false )
      echo "Could not connect.\n";
      die( print_r( sqlsrv_errors(), true ));
 }
+
+disableTrigger($conn);
 
 /* Initiate transaction. */
 /* Exit script if transaction cannot be initiated. */

@@ -6,12 +6,7 @@ can be successfully retrieved as streams.
 --ENV--
 PHPT_EXEC=true
 --SKIPIF--
-<?
-require_once('MsCommon.inc');
-// locale must be set before 1st connection
-setUSAnsiLocale();
-require('skipif_versions_old.inc');
-?>
+<?php require('skipif_versions_old.inc'); ?>
 --FILE--
 <?php
 require_once('MsCommon.inc');
@@ -91,15 +86,24 @@ function verifyStream($stmt, $row, $colIndex)
 
 function checkData($col, $actual, $expected)
 {
+    if (is_null($expected)) {
+        return empty($actual);
+    }
+    
     $success = true;
-
+          
     if (isBinary($col)) {
-        $actual = bin2hex($actual);
-        if (strncasecmp($actual, $expected, strlen($expected)) != 0) {
+        if (is_null($actual)) {
             $success = false;
+        } else {
+            $actual = bin2hex($actual);
+            if (strncasecmp($actual, $expected, strlen($expected)) != 0) {
+                $success = false;
+            }
         }
     } else {
-        if (strncasecmp($actual, $expected, strlen($expected)) != 0) {
+        $len = (empty($expected)) ? 0 : strlen($expected);
+        if (strncasecmp($actual, $expected, $len) != 0) {
             if ($col != 19) {    // skip ntext
                 $pos = strpos($actual, $expected);
                 if (($pos === false) || ($pos > 1)) {

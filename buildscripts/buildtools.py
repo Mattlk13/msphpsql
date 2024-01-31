@@ -50,12 +50,8 @@ class BuildUtil(object):
         
     def version_label(self):
         """Return the version label based on the PHP version."""
-        major_ver = self.major_version()
-        
-        if major_ver[2] == '0':
-            version = major_ver[0]
-        else:
-            version = major_ver[0] + major_ver[2]
+        major_ver = self.major_version()       
+        version = major_ver[0] + major_ver[2]
         return version
 
     def driver_name(self, driver, suffix):
@@ -100,16 +96,11 @@ class BuildUtil(object):
         
     def compiler_version(self, sdk_dir):
         """Return the appropriate compiler version based on PHP version."""
-        if self.vc is '':
-            VC = 'vc14'
+        if self.vc == '':
+            VC = 'vc15'
             version = self.version_label()
-            if version >= '72':     # Compiler version for PHP 7.2 or above
-                VC = 'vc15'
-                if version == '74':
-                    # Compiler version for PHP 7.4 or above
-                    # Can be compiled using VS 2017 or VS 2019
-                    print('Checking compiler versions...')
-                    VC = self.determine_compiler(sdk_dir, 15)
+            if version[0] == '8':     # Compiler version for PHP 8.0 or above
+                VC = 'vs16'
             self.vc = VC
             print('Compiler: ' + self.vc)
         return self.vc
@@ -330,7 +321,7 @@ class BuildUtil(object):
             else:       # pdo_sqlsrv
                 cmd_line = ' --enable-pdo --with-pdo-sqlsrv=shared ' + cmd_line
                 
-        cmd_line = 'cscript configure.js --disable-all --enable-cli --enable-cgi --enable-json --enable-embed' + cmd_line
+        cmd_line = 'cscript configure.js --disable-all --enable-cli --enable-cgi --enable-json --enable-embed --enable-mbstring --enable-ctype' + cmd_line
         if self.thread == 'nts':
             cmd_line = cmd_line + ' --disable-zts'
         return cmd_line
@@ -402,7 +393,7 @@ class BuildUtil(object):
         
         batch_file = self.create_local_batch_file(make_clean, cmd_line, log_file)
         
-        # Reference: https://github.com/OSTC/php-sdk-binary-tools
+        # Reference: https://github.com/php/php-sdk-binary-tools
         # Clone the master branch of PHP sdk if the directory does not exist 
         print('Downloading the latest php SDK...')
         
@@ -415,7 +406,7 @@ class BuildUtil(object):
 
         phpSDK = os.path.join(sdk_dir, 'php-sdk')
         if not os.path.exists( phpSDK ):
-            os.system('git clone https://github.com/OSTC/php-sdk-binary-tools.git --branch master --single-branch --depth 1 ' + phpSDK)
+            os.system('git clone https://github.com/php/php-sdk-binary-tools.git --branch master --single-branch --depth 1 ' + phpSDK)
         os.chdir(phpSDK)
         os.system('git pull ')
         print('Done cloning the latest php SDK...')

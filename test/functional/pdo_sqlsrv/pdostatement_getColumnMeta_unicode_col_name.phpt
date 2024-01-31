@@ -57,13 +57,33 @@ function fetchBoth($conn, $tbname)
     // Test invalid arguments, set error mode to silent to reduce the amount of error messages generated
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 
-    // Test negative column number, ignore the error messages
-    $meta = $stmt->getColumnMeta(-1);
-    var_dump($meta);
+    // Test negative column number
+    try {
+        $meta = $stmt->getColumnMeta(-1);
+        echo "Expect getColumnMeta to fail with -1\n";
+    } catch (Error $e) {
+        if (PHP_MAJOR_VERSION == 8) {
+            $error = '*PDOStatement::getColumnMeta(): Argument #1 ($column) must be greater than or equal to 0*';
+        } else {
+            $error = '*Invalid column reference: column number must be non-negative*';
+        }
+        if (!fnmatch($error, $e->getMessage())) {
+            echo "Unexpected error:";
+            var_dump($e->getMessage());
+        }
+    }
 
     // Test non-existent column number
     $meta = $stmt->getColumnMeta(10);
     var_dump($meta);
+}
+
+// When testing with PHP 8.0 the negative test case throws an Error instead of a warning. 
+// Implement a custom warning handler such that with PHP 7.x the warning would be handled 
+// to throw an Error.
+function warningHandler($errno, $errstr) 
+{ 
+    throw new Error($errstr);
 }
 
 function createAndInsertTableUnicode($conn, $tbname)
@@ -106,6 +126,7 @@ try {
     $db = connect();
     $tbname = "PDO_MainTypes";
     createAndInsertTableUnicode($db, $tbname);
+    set_error_handler("warningHandler", E_WARNING);
     fetchBoth($db, $tbname);
 } catch (PDOException $e) {
     var_dump($e);
@@ -124,7 +145,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(12) "此是後話"
   ["len"]=>
@@ -142,7 +163,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(29) "Κοντάוְאַתָּה第"
   ["len"]=>
@@ -160,7 +181,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(30) "NΚοντάוְאַתָּה第"
   ["len"]=>
@@ -178,7 +199,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(38) "ნომინავიiałopioБун"
   ["len"]=>
@@ -196,7 +217,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(10) "VarcharCol"
   ["len"]=>
@@ -214,7 +235,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(33) "NVarΚοντάוְאַתָּה第"
   ["len"]=>
@@ -232,7 +253,7 @@ array(8) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(8) "FloatCol"
   ["len"]=>
@@ -248,7 +269,7 @@ array(7) {
   ["table"]=>
   string(0) ""
   ["pdo_type"]=>
-  int(2)
+  int(%d)
   ["name"]=>
   string(6) "XmlCol"
   ["len"]=>
@@ -256,7 +277,4 @@ array(7) {
   ["precision"]=>
   int(0)
 }
-
-Warning: PDOStatement::getColumnMeta(): SQLSTATE[42P10]: Invalid column reference: column number must be non-negative in %s on line %x
-bool(false)
 bool(false)
